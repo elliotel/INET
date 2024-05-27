@@ -20,7 +20,7 @@ public class ServerThread extends Thread {
             out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            synchronized (ST.class) {
+            synchronized (ServerThread.class) {
                 clientWriters.add(out);
                 clientCount++;
                 sendClientCountMessage();
@@ -39,7 +39,7 @@ public class ServerThread extends Thread {
                 }
             }
 
-            synchronized (ST.class) {
+            synchronized (ServerThread.class) {
                 clientWriters.remove(out);
                 clientCount--;
                 sendClientCountMessage();

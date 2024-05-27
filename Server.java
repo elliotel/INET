@@ -15,7 +15,7 @@ public class Server {
 
             while (true) {
                 try {
-                    new ST(serverSocket.accept(), clientWriters).start();
+                    new ServerThread(serverSocket.accept(), clientWriters).start();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
