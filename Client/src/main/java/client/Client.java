@@ -1,7 +1,11 @@
+package client;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import biz.source_code.utils.RawConsoleInput;
 
 public class Client {   
     public static void main(String[] args) {
@@ -13,15 +17,44 @@ public class Client {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         ) {
-            String fromServer, fromUser;
+            String fromServer;
+            String fromUser = "";
+            int c = ' ';
             
             while ((fromServer = in.readLine()) != null) {
+                
                 System.out.println("Server: " +  fromServer);
                 if (fromServer.equals("Closing connection...")) {
                     break;
                 }
-
-                fromUser = stdIn.readLine();
+                try {
+                    c = RawConsoleInput.read(true);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                switch (c) {
+                    case 'w':
+                        fromUser = "UP";
+                        break;
+                    case 'a':
+                        fromUser = "LEFT";
+                        break;
+                    case 's':
+                        fromUser = "DOWN";
+                        break;
+                    case 'd':
+                        fromUser = "RIGHT";
+                        break;
+                    //ESC
+                    case 27:
+                        //Quits game
+                        fromUser = "";
+                        break;
+                    default:
+                        fromUser = "INGET HÄNDER HAHA";
+                        break;
+                }
                 if (fromUser != null) {
                     System.out.println("Client: " + fromUser);
                     out.println(fromUser);
