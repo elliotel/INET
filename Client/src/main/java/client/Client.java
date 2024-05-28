@@ -25,7 +25,8 @@ public class Client {
             String fromUser = "";
             int c = ' ';
             Terminal terminal = TerminalBuilder.builder().system(true).build();
-            NonBlockingReader reader = terminal.reader();   
+            NonBlockingReader reader = terminal.reader();
+            terminal.enterRawMode(); // Ensure terminal is in raw mode   
             
             while ((fromServer = in.readLine()) != null) {
                 
