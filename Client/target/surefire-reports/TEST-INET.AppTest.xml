@@ -4,7 +4,7 @@
     <property name="java.specification.version" value="22"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.class.path" value="C:\Users\elliot\Documents\GitHub\INET\Client\target\test-classes;C:\Users\elliot\Documents\GitHub\INET\Client\target\classes;C:\Users\elliot\.m2\repository\junit\junit\3.8.1\junit-3.8.1.jar;C:\Users\elliot\.m2\repository\net\java\dev\jna\jna\5.14.0\jna-5.14.0.jar;"/>
+    <property name="java.class.path" value="C:\Users\elliot\Documents\GitHub\INET\Client\target\test-classes;C:\Users\elliot\Documents\GitHub\INET\Client\target\classes;C:\Users\elliot\.m2\repository\junit\junit\3.8.1\junit-3.8.1.jar;C:\Users\elliot\.m2\repository\org\jline\jline\3.26.1\jline-3.26.1.jar;"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -15,9 +15,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="SE"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-22\bin"/>
-    <property name="sun.java.command" value="C:\Users\elliot\AppData\Local\Temp\surefire643846101263106725\surefirebooter-20240527175936695_3.jar C:\Users\elliot\AppData\Local\Temp\surefire643846101263106725 2024-05-27T17-59-36_592-jvmRun1 surefire-20240527175936695_1tmp surefire_0-20240527175936695_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\elliot\AppData\Local\Temp\surefire11222186410099259087\surefirebooter-20240528150300648_3.jar C:\Users\elliot\AppData\Local\Temp\surefire11222186410099259087 2024-05-28T15-03-00_508-jvmRun1 surefire-20240528150300648_1tmp surefire_0-20240528150300648_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="C:\Users\elliot\Documents\GitHub\INET\Client\target\test-classes;C:\Users\elliot\Documents\GitHub\INET\Client\target\classes;C:\Users\elliot\.m2\repository\junit\junit\3.8.1\junit-3.8.1.jar;C:\Users\elliot\.m2\repository\net\java\dev\jna\jna\5.14.0\jna-5.14.0.jar;"/>
+    <property name="surefire.test.class.path" value="C:\Users\elliot\Documents\GitHub\INET\Client\target\test-classes;C:\Users\elliot\Documents\GitHub\INET\Client\target\classes;C:\Users\elliot\.m2\repository\junit\junit\3.8.1\junit-3.8.1.jar;C:\Users\elliot\.m2\repository\org\jline\jline\3.26.1\jline-3.26.1.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\elliot"/>
     <property name="user.language" value="sv"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\elliot\AppData\Local\Temp\surefire643846101263106725\surefirebooter-20240527175936695_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\elliot\AppData\Local\Temp\surefire11222186410099259087\surefirebooter-20240528150300648_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="22.0.1+8-16"/>
@@ -58,5 +58,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="66.0"/>
   </properties>
-  <testcase name="testApp" classname="INET.AppTest" time="0.003"/>
+  <testcase name="testApp" classname="INET.AppTest" time="0.004"/>
 </testsuite>
