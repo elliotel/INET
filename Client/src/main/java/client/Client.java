@@ -5,7 +5,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import biz.source_code.utils.RawConsoleInput;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.NonBlockingReader;
+
+import java.io.IOException;
 
 public class Client {   
     public static void main(String[] args) {
@@ -20,6 +24,9 @@ public class Client {
             String fromServer;
             String fromUser = "";
             int c = ' ';
+            Terminal terminal = TerminalBuilder.builder().system(true).build();
+            NonBlockingReader reader = terminal.reader();
+            terminal.enterRawMode(); // Ensure terminal is in raw mode   
             
             while ((fromServer = in.readLine()) != null) {
                 
@@ -28,7 +35,7 @@ public class Client {
                     break;
                 }
                 try {
-                    c = RawConsoleInput.read(true);
+                    c = reader.read();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
