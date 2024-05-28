@@ -8,6 +8,7 @@ import java.net.Socket;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.NonBlockingReader;
+import org.jline.utils.InfoCmp.Capability;
 
 import java.io.IOException;
 
@@ -20,16 +21,18 @@ public class Client {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+            Terminal terminal = TerminalBuilder.builder().system(true).build();
+            NonBlockingReader reader = terminal.reader();
         ) {
+            terminal.enterRawMode(); // Ensure terminal is in raw mode   
+            terminal.writer().write("\033[?25l"); //Hides the cursor
+            //terminal.writer().write("\033[?25h"); //Shows the cursor again
+            clearScreen(terminal);
             String fromServer;
             String fromUser = "";
             int c = ' ';
-            Terminal terminal = TerminalBuilder.builder().system(true).build();
-            NonBlockingReader reader = terminal.reader();
-            terminal.enterRawMode(); // Ensure terminal is in raw mode   
             
             while ((fromServer = in.readLine()) != null) {
-                
                 System.out.println("Server: " +  fromServer);
                 if (fromServer.equals("Closing connection...")) {
                     break;
@@ -53,6 +56,9 @@ public class Client {
                     case 'd':
                         fromUser = "RIGHT";
                         break;
+                    case 'c':
+                        fromUser = "Nu clearade vi skärmen hehe";
+                        break;
                     //ESC
                     case 27:
                         //Quits game
@@ -62,6 +68,7 @@ public class Client {
                         fromUser = "INGET HÄNDER HAHA";
                         break;
                 }
+                clearScreen(terminal);
                 if (fromUser != null) {
                     System.out.println("Client: " + fromUser);
                     out.println(fromUser);
@@ -71,5 +78,11 @@ public class Client {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    
+    private static void clearScreen(Terminal terminal) {
+        terminal.puts(Capability.clear_screen);
+        terminal.flush();
     }
 }
