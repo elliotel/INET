@@ -8,6 +8,7 @@ import java.net.Socket;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.NonBlockingReader;
+import org.jline.utils.InfoCmp.Capability;
 
 import java.io.IOException;
 
@@ -20,13 +21,15 @@ public class Client {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+            Terminal terminal = TerminalBuilder.builder().system(true).build();
+            NonBlockingReader reader = terminal.reader();
         ) {
+            terminal.enterRawMode(); // Ensure terminal is in raw mode   
+            terminal.puts(Capability.clear_screen);
+            terminal.flush();
             String fromServer;
             String fromUser = "";
             int c = ' ';
-            Terminal terminal = TerminalBuilder.builder().system(true).build();
-            NonBlockingReader reader = terminal.reader();
-            terminal.enterRawMode(); // Ensure terminal is in raw mode   
             
             while ((fromServer = in.readLine()) != null) {
                 
@@ -52,6 +55,10 @@ public class Client {
                         break;
                     case 'd':
                         fromUser = "RIGHT";
+                        break;
+                    case 'c':
+                        fromUser = "Nu clearade vi skärmen hehe";
+                        terminal.flush();
                         break;
                     //ESC
                     case 27:
