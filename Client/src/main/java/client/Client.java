@@ -25,14 +25,12 @@ public class Client {
             NonBlockingReader reader = terminal.reader();
         ) {
             terminal.enterRawMode(); // Ensure terminal is in raw mode   
-            terminal.puts(Capability.clear_screen);
-            terminal.flush();
+            clearScreen(terminal);
             String fromServer;
             String fromUser = "";
             int c = ' ';
             
             while ((fromServer = in.readLine()) != null) {
-                
                 System.out.println("Server: " +  fromServer);
                 if (fromServer.equals("Closing connection...")) {
                     break;
@@ -58,7 +56,6 @@ public class Client {
                         break;
                     case 'c':
                         fromUser = "Nu clearade vi skärmen hehe";
-                        terminal.flush();
                         break;
                     //ESC
                     case 27:
@@ -69,6 +66,7 @@ public class Client {
                         fromUser = "INGET HÄNDER HAHA";
                         break;
                 }
+                clearScreen(terminal);
                 if (fromUser != null) {
                     System.out.println("Client: " + fromUser);
                     out.println(fromUser);
@@ -78,5 +76,11 @@ public class Client {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    
+    private static void clearScreen(Terminal terminal) {
+        terminal.puts(Capability.clear_screen);
+        terminal.flush();
     }
 }
