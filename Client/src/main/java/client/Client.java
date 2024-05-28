@@ -25,6 +25,8 @@ public class Client {
             NonBlockingReader reader = terminal.reader();
         ) {
             terminal.enterRawMode(); // Ensure terminal is in raw mode   
+            terminal.writer().write("\033[?25l"); //Hides the cursor
+            //terminal.writer().write("\033[?25h"); //Shows the cursor again
             clearScreen(terminal);
             String fromServer;
             String fromUser = "";
