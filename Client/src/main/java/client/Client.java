@@ -18,7 +18,10 @@ public class Client {
              Terminal terminal = TerminalBuilder.terminal();
              NonBlockingReader reader = terminal.reader()) 
              {
-            terminal.enterRawMode(); // Ensure terminal is in raw mode 
+            terminal.enterRawMode(); // Ensure terminal is in raw mode
+            terminal.writer().write("\033[?25l"); //Hides the cursor
+            //terminal.writer().write("\033[?25h"); //Shows the cursor again
+            clearScreen(terminal);
             System.out.println("Connected to server succesfully");
             // Start a new thread to listen for messages from the server
             new Thread(new ServerListener(in, terminal)).start();
@@ -65,6 +68,12 @@ public class Client {
             //e.printStackTrace();
         }
     }
+    
+
+    public static void clearScreen(Terminal terminal) {
+        terminal.puts(Capability.clear_screen);
+        terminal.flush();
+    }
 }
 
 class ServerListener implements Runnable {
@@ -80,16 +89,15 @@ class ServerListener implements Runnable {
         String fromServer;
         try {
             while ((fromServer = in.readLine()) != null) {
-                clearScreen(terminal);
-                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("START")) {
+                    Client.clearScreen(terminal);
+                }
+                else {
+                    System.out.println(fromServer);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static void clearScreen(Terminal terminal) {
-        terminal.puts(Capability.clear_screen);
-        terminal.flush();
     }
 }

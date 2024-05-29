@@ -32,12 +32,14 @@ public class ServerThread extends Thread {
 
             synchronized (ServerThread.class) {
                 clientWriters.add(out);
-                clientsConnected++;
+                clientsConnected++; 
                 if(clientsConnected == 2){
                     state = "READY";
                 }
                 waitOrReadyMessage();
             }
+
+            Game game = new Game(clientID);
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
@@ -46,7 +48,11 @@ public class ServerThread extends Thread {
                     break;
                 } else {
                     //out.println("Received: " + inputLine);
-                    send2all("Klient " + clientID + " tryckte: " + inputLine);
+                    
+                    synchronized (ServerThread.class) {
+                    game.movePlayer(inputLine);
+                    send2all(game.printBoard());
+                    }
                 }
             }
 
@@ -69,6 +75,7 @@ public class ServerThread extends Thread {
     public void send2all(String s) {
         synchronized (clientWriters) {
             for (PrintWriter out : clientWriters) {
+                out.println("START");
                 out.println(s);
             }
         }
