@@ -18,7 +18,9 @@ public class Client {
              Terminal terminal = TerminalBuilder.terminal();
              NonBlockingReader reader = terminal.reader()) 
              {
-            terminal.enterRawMode(); // Ensure terminal is in raw mode 
+            terminal.enterRawMode(); // Ensure terminal is in raw mode
+            terminal.writer().write("\033[?25l"); //Hides the cursor
+            //terminal.writer().write("\033[?25h"); //Shows the cursor again
             // Start a new thread to listen for messages from the server
             new Thread(new ServerListener(in, terminal)).start();
             String fromUser = "";
@@ -77,6 +79,7 @@ class ServerListener implements Runnable {
             while ((fromServer = in.readLine()) != null) {
                 if (fromServer.equals("Closing connection...")) {
                     System.out.println("Closing connection...");
+                    System.exit(0);
                     break;
                 }
                 if(fromServer.equals("CLEAR")){
