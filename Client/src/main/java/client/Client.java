@@ -45,13 +45,11 @@ public class Client {
                     case 13:
                         fromUser = "ENTER";
                         break;
-                    case 'c':
-                        //fromUser = "Nu clearade vi skärmen hehe";
-                        break;
                     //ESC
                     case 27:
                         //Quits game
                         fromUser = "q";
+                        System.exit(0);
                         break;
                     default:
                         //
