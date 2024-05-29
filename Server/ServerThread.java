@@ -8,10 +8,12 @@ public class ServerThread extends Thread {
     private static int clientsConnected = 0; 
     private static int clientCounter = 0; // Static counter för att ge varje klient unikt ID
     private Socket socket = null;
-    private PrintWriter out;
+    private PrintWriter out = null;
     private Set<PrintWriter> clientWriters;
     private int clientID; //unikt ID för varje klient
     private static String state = "WAITING";
+    private static Object lock = new Object();
+    private static boolean inProgress = false;
 
     public ServerThread(Socket socket, Set<PrintWriter> clientWriters) {
         this.socket = socket;
@@ -24,51 +26,93 @@ public class ServerThread extends Thread {
     }
 
     public void run() {
+        BufferedReader in = null;
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            //Protocol protocol = new Protocol();
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             synchronized (ServerThread.class) {
                 clientWriters.add(out);
                 clientsConnected++; 
                 if(clientsConnected == 2){
+                    synchronized(lock) {
                     state = "READY";
-                }
-                waitOrReadyMessage();
-            }
-
-            Game game = new Game(clientID);
-
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                if (inputLine.equals("q")) {
-                    out.println("Closing connection...");
-                    break;
-                } else {
-                    //out.println("Received: " + inputLine);
-                    
-                    synchronized (ServerThread.class) {
-                    game.movePlayer(inputLine);
-                    send2all(game.printBoard());
+                    lock.notify();
                     }
                 }
-            }
-
-            synchronized (ServerThread.class) {
-                clientWriters.remove(out);
-                clientsConnected--;
-                if(clientsConnected == 1){
-                    state = "WAITING";
-                }
                 waitOrReadyMessage();
             }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            socket.close();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            System.out.println("Client: " + clientID + " disconnected");
+        Game game = null;
+
+        while (true) {
+            try {
+                //Protocol protocol = new Protocol();
+                
+                synchronized (lock) {
+                    try {
+                        while (state.equals("WAITING")) {
+                            lock.wait();
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                synchronized (ServerThread.class) {
+                    System.out.println("Creating new game for client id: " + clientID);
+                    game = new Game();
+                    inProgress = true;
+                }
+
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    if (inProgress == false) {
+                        break;
+                    }
+                    if (inputLine.equals("q")) {
+                        out.println("Closing connection...");
+                        break;
+                    } else {
+                        //out.println("Received: " + inputLine);
+                    
+                        synchronized (ServerThread.class) {
+                            game.movePlayer(inputLine);
+                            send2all(game.printBoard());
+                        }
+                    }
+                }
+
+                game.resetGame();
+                game = null;
+
+                synchronized (ServerThread.class) {
+                    waitOrReadyMessage();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Client " + clientID + " disconnected");
+                synchronized (ServerThread.class) {
+                    clientWriters.remove(out);
+                    clientsConnected--;
+                    if (game != null) {
+                        System.out.println("Resetting game");
+                        game.resetGame();
+                        game = null;
+                    }
+                    if(clientsConnected == 1){
+                        state = "WAITING";
+                    }
+                    inProgress = false;
+                }
+                break;
+            }
         }
     }
 
@@ -83,16 +127,14 @@ public class ServerThread extends Thread {
 
     private void waitOrReadyMessage() {
         synchronized (clientWriters) {
-            for (PrintWriter out : clientWriters) {
-                if(state == "WAITING"){
-                    out.println("Client count: " + clientCounter);
-                    out.println("Clients connected = " + clientsConnected);
-                    out.println(" Waiting for another player to connect...");
-                }
-                if (state == "READY"){
-                    out.println(clientsConnected + " Clients connected");
-                    out.println("Press [enter] to play!");
-                }
+            if(state == "WAITING"){
+                send2all("Client count: " + clientCounter + "\n" +
+                         "Clients connected = " + clientsConnected + "\n" +
+                         "Waiting for another player to connect...");
+            }
+            if (state == "READY"){
+                send2all(clientsConnected + " Clients connected" + "\n" +
+                         "Press [enter] to play!");
             }
         }
     }

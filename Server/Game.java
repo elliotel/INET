@@ -4,12 +4,14 @@ public class Game {
 
     private static char[][] board;
     private Player player;
-    public Game(int clientID) {
+    private static int playerCount = 0;
+
+    public Game() {
 
         if (board == null) {
             setupBoard();
         }
-        player = spawnPlayer(clientID);
+        player = spawnPlayer();
     }
 
     private void setupBoard() {
@@ -26,17 +28,23 @@ public class Game {
         }
     }
 
-    private Player spawnPlayer(int clientID) {
+    public void resetGame() {
+        playerCount = 0;
+        board = null;
+    }
+
+    private Player spawnPlayer() {
+        int playerID = ++playerCount;
         int y = board.length - 6;
         int x = 6;
-        if (clientID == 2) {
+        if (playerID == 2) {
             x = board[0].length - 6;
         }
         if (board[y][x] != ' ') {
             throw new RuntimeException();
         }
-        board[y][x] = (char) (clientID + '0');
-        return new Player(clientID, x, y);
+        board[y][x] = (char) (playerID + '0');
+        return new Player(playerID, x, y);
     }
 
     public void movePlayer(String Direction) {
@@ -77,18 +85,18 @@ public class Game {
 }
 
 class Player {
-    private int clientId;
+    private int playerID;
     private int x;
     private int y;
 
-    public Player(int clientID, int x, int y) {
-        this.clientId = clientID;
+    public Player(int playerID, int x, int y) {
+        this.playerID = playerID;
         this.x = x;
         this.y = y;
     }
 
     public int getID() {
-        return clientId;
+        return playerID;
     }
 
     public int getX() {

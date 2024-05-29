@@ -1,5 +1,6 @@
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +15,14 @@ public class Server {
             System.out.println("Server started on port " + portNumber);
 
             while (true) {
+                Socket socket = null;
                 try {
-                    new ServerThread(serverSocket.accept(), clientWriters).start();
+                    socket = serverSocket.accept();
+                    new ServerThread(socket, clientWriters).start();
                 } catch (Exception e) {
+                    if (socket != null) {
+                        socket.close();
+                    }
                     e.printStackTrace();
                 }
             }
