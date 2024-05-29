@@ -19,7 +19,6 @@ public class Client {
              NonBlockingReader reader = terminal.reader()) 
              {
             terminal.enterRawMode(); // Ensure terminal is in raw mode 
-            System.out.println("Connected to server succesfully");
             // Start a new thread to listen for messages from the server
             new Thread(new ServerListener(in, terminal)).start();
             String fromUser = "";
@@ -42,9 +41,6 @@ public class Client {
                     case 13:
                         fromUser = "ENTER";
                         break;
-                    case 'c':
-                        //fromUser = "Nu clearade vi skärmen hehe";
-                        break;
                     //ESC
                     case 27:
                         //Quits game
@@ -54,9 +50,8 @@ public class Client {
                         //
                         break;
                 }
-                if (fromUser != "") { // Check if a valid key is pressed
-                    //System.out.println(c);
-                    out.println(fromUser); // Send the character to the server
+                if (fromUser != "") { // Kolla så klienten tryckt på något okej
+                    out.println(fromUser); // Skicka till servern
                     fromUser = "";
                 }
             }
@@ -80,8 +75,16 @@ class ServerListener implements Runnable {
         String fromServer;
         try {
             while ((fromServer = in.readLine()) != null) {
-                clearScreen(terminal);
-                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("Closing connection...")) {
+                    System.out.println("Closing connection...");
+                    break;
+                }
+                if(fromServer.equals("CLEAR")){
+                    clearScreen(terminal);
+                } else {
+                    //Skriv inte ut clear, men allt annat
+                    System.out.println(fromServer);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
