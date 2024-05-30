@@ -121,7 +121,7 @@ public class Protocol {
             else {
                 //Returns true if game was won
                 if (game.movePlayer(input)) {
-                    ServerThread.state = "VICTORY";  
+                    thread.state.setState("VICTORY");
                     return victory();
                 }
             }
