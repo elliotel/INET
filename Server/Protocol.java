@@ -19,10 +19,10 @@ public class Protocol {
                     System.out.println("ID: " + thread.clientID + " RESETTING");
                     game.resetGame();
                     game = null;
-                    thread.clientsConnected++;
+                    ServerThread.clientsConnected++;
                     System.out.println("PLACE A / ID: " + thread.clientID + " / clients connected: " + thread.clientsConnected + " / State: " + thread.state.getState());
                 }
-                if (thread.clientsConnected == 1) { //Vet att den kommer vara 1 annars ska den inte funka
+                if (ServerThread.clientsConnected == 1) { //Vet att den kommer vara 1 annars ska den inte funka
                     return waiting();
                 }
                 else {                              //Nu är 2 connected
@@ -55,7 +55,18 @@ public class Protocol {
                     }else {
                         return running(input); 
                     }
-                      
+            case "VICTORY":
+                    if (game != null) {
+                        game.resetGame();
+                        game = null;
+                    }
+                    if (input == null || !input.equals("ENTER")) {
+                        return victory();
+                    }
+                    else {
+                        thread.state.setState("WAITING");
+                        return waiting();
+                    }
             case "RESTART":
             /* 
             if (game != null && input != "q") {
@@ -84,15 +95,16 @@ public class Protocol {
         if (game != null) {
             game.resetGame();
             game = null;
+        }
         }*/
-        output = "Client counter: " + thread.clientCounter + "\n" 
-                + "Clients connected = " + thread.clientsConnected + "\n\n\n"
+        output = "Client counter: " + ServerThread.clientCounter + "\n" 
+                + "Clients connected = " + ServerThread.clientsConnected + "\n\n\n"
                 + "Waiting for another player to connect... ";
         return output;
     }
 
     private String ready() {
-        output = thread.clientsConnected + " Clients connected \n\n\n" 
+        output = ServerThread.clientsConnected + " Clients connected \n\n\n" 
                + "Press [enter] to play!";
         return output;
     }
@@ -103,10 +115,26 @@ public class Protocol {
             game = new Game();
         }
         if (input != null && !input.equals("ENTER")) {
-            game.movePlayer(input);
+            if (input.equals("DROP")) {
+                game.dropItem();
+            }
+            else {
+                //Returns true if game was won
+                if (game.movePlayer(input)) {
+                    ServerThread.state = "VICTORY";  
+                    return victory();
+                }
+            }
         }
         output = game.printBoard();
         return output;
+    }
+
+    private String victory() {
+        output = "The game was won! \n\n\n" 
+               + "Press [enter] to return to menu!";
+        return output;
+
     }
 
     private String restart() {

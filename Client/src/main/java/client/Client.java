@@ -40,6 +40,9 @@ public class Client {
                     case 'd':
                         fromUser = "RIGHT";
                         break;
+                    case 'g':
+                        fromUser = "DROP";
+                        break;
                     case 13:
                         fromUser = "ENTER";
                         break;
