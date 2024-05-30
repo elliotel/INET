@@ -1,10 +1,12 @@
 import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Server {
+    protected static StateHolder state = new StateHolder("WAITING");
     static int portNumber = 4444;
     private static Set<PrintWriter> clientWriters = Collections.synchronizedSet(new HashSet<>());
     //anv Set för att flera trådar samtidigt ska kunna manipulera datan
@@ -15,11 +17,33 @@ public class Server {
 
             while (true) {
                 try {
-                    new ServerThread(serverSocket.accept(), clientWriters).start();
+                    Socket clientSocket = serverSocket.accept();
+                    if(state.getState().equals("WAITING")){
+                        System.out.println("\n\n");
+                        System.out.println("Server.java state: " + state.getState());
+                        new ServerThread(clientSocket, clientWriters, state).start();
+                    } else {
+                        reject(clientSocket);
+                        break;
+                    }
                 } catch (Exception e) {
+                    //Gick ej för klient att connecta
                     e.printStackTrace();
                 }
             }
+        } catch (Exception e) {
+            //Gick ej att starta server på den porten
+            e.printStackTrace();
+        }
+    }
+
+    public static void reject(Socket clientSocket) {
+        try {
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out.println("CLEAR");
+            out.println("Could not connect, game not ready...");
+            out.println("Closing connection...");
+            clientSocket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

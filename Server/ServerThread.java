@@ -10,12 +10,13 @@ public class ServerThread extends Thread {
     private Socket socket = null;
     private PrintWriter out;
     private Set<PrintWriter> clientWriters;
+    public StateHolder state;
     protected int clientID;                       //unikt ID för varje klient
-    protected static String state = "WAITING";
     private String output;
     private Protocol protocol;
 
-    public ServerThread(Socket socket, Set<PrintWriter> clientWriters) {
+    public ServerThread(Socket socket, Set<PrintWriter> clientWriters, StateHolder state) {
+        this.state = state;
         this.socket = socket;
         this.clientWriters = clientWriters;
         protocol = new Protocol(this);
@@ -33,27 +34,23 @@ public class ServerThread extends Thread {
             synchronized (ServerThread.class) {
                 clientWriters.add(out);
                 clientsConnected++;
-                System.out.println("PLACE C" + clientID + ": " + clientsConnected + " - " + state);
-                if(clientsConnected == 2){
-                    state = "READY";
-                }
+                System.out.println("PLACE C / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
                 send2all(null);
             }
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.equals("q")) {
-                    quit();
                     break;
                 } else {
                     send2all(inputLine);
                 }
             }
 
-            //Klienten har tryckt ctrl-c
-            //synchronized (ServerThread.class) {
-            //     quit();
-            //}
+            //Klienten har tryckt ctrl-c ELLER 'q'
+            synchronized (ServerThread.class) {
+                quit();
+            }
 
             socket.close();
         } catch (Exception e) {
@@ -63,21 +60,22 @@ public class ServerThread extends Thread {
     }
 
     private void quit() {
-        //Skriv endast till klienten som stränger connection
+        //Skriv endast till klienten som stänger connection
+        out.println("CLEAR");
         out.println("Closing connection...");
+
         //Ta bort klienten ur listan
         clientWriters.remove(out);
-        System.out.println("Setting clients to 0");
-        clientsConnected = 0;
-        //Ändra state till waiting
-        //if(clientsConnected == 1){
-            state = "RESTART";
-        //}
+        clientsConnected--;
+
+        
         //Hämta meddelande att skicka till alla (kommer vara 1 klient)
         send2all("q");
+        System.out.println("PLACE E / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
     }
 
     public void send2all(String input) {
+        System.out.println("PLACE F / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
         //Baserat på input, state, antal connected, counter, clientID
         output = protocol.processInput(input);
         //Skriv till alla 
