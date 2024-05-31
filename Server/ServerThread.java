@@ -49,10 +49,17 @@ public class ServerThread extends Thread {
                 }
             }
 
+            if(inputLine == null){
+                System.out.println("Client: " + clientID + " disconnected");
+            }
+
             //Klienten har tryckt ctrl-c ELLER 'q'
             synchronized (ServerThread.class) {
                 System.out.println("VI FICK ETT QUIT");
-                quit();
+                if (clientsConnected > 0){
+                    quit();
+                }
+                
             }
 
             socket.close();
