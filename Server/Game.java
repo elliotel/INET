@@ -24,7 +24,6 @@ public class Game {
     }
 
     private void setupBoard() {
-        board =  new char[20][40];
         spawnWalls();
         spawnPlayers();
         spawnKeys();
@@ -33,6 +32,7 @@ public class Game {
         spawnExit();
     }
     private void spawnWalls() {
+        board =  new char[20][40];
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[0].length; col++) {
                 if (row == 0 || row == board.length - 1 || col == 0 || col == board[0].length - 1 || row == 6 || (col == 11 || col == board[0].length - 12) && row < 6) {
@@ -81,9 +81,11 @@ public class Game {
         }
     }
 
+    
     public void resetGame() {
         playerCount = 0;
-        board = null;
+        escapedPlayers = 0;
+        setupBoard();
     }
 
     private Player setupPlayer() {

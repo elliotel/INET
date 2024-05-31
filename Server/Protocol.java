@@ -28,7 +28,7 @@ public class Protocol {
                     return waiting();
                 }
                 else {                              //Nu är 2 connected
-                    synchronized (thread.state) {
+                    synchronized (Server.class) {
                         thread.state.setState("READY");
                     }
                     return ready();
