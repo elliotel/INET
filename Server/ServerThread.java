@@ -77,14 +77,18 @@ public class ServerThread extends Thread {
 
     public void quitAll() {
         synchronized (ServerThread.class) {
-            clientsConnected = 0;
+            //clientsConnected = 0;
         }
-        for (PrintWriter out : clientWriters) {
-            out.println("CLEAR");
-            out.println("Closing connection...");
-        }
-        for (PrintWriter out : clientWriters) {
-            clientWriters.remove(out);
+        synchronized (clientWriters) {
+            for (PrintWriter out : clientWriters) {
+                clientsConnected--;
+                out.println("CLEAR");
+                out.println("Closing connection...");
+                clientWriters.remove(out);
+            }/* 
+            for (PrintWriter out : clientWriters) {
+                clientWriters.remove(out);
+            }*/
         }
     }
 
@@ -92,11 +96,15 @@ public class ServerThread extends Thread {
         System.out.println("PLACE F / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
         //Baserat på input, state, antal connected, counter, clientID
         output = protocol.processInput(input);
-        //Skriv till alla 
-        synchronized (clientWriters) {
-            for (PrintWriter out : clientWriters) {
-                out.println("CLEAR"); //Be klient cleara terminal innan varje "riktig" output  
-                out.println(output);    //För att kunna skriva flera rader
+        if(output.equals("quitall")){
+            quitAll();
+        } else {
+            //Skriv till alla 
+            synchronized (clientWriters) {
+                for (PrintWriter out : clientWriters) {
+                    out.println("CLEAR"); //Be klient cleara terminal innan varje "riktig" output  
+                    out.println(output);    //För att kunna skriva flera rader
+                }
             }
         }
     }
