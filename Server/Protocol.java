@@ -67,7 +67,9 @@ public class Protocol {
                     }
                     else {
                         thread.state.setState("WAITING");  
-                        thread.quitAll();    
+                        System.out.println("QUITALL! " + thread.clientID + ": " + input + " STATE: " + thread.state.getState());
+                        //thread.quitAll();
+                        return "quitall";
                     }
             case "RESTART":
             if (game != null) {
