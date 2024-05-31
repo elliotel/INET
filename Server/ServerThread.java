@@ -3,22 +3,23 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Set;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class ServerThread extends Thread {
+    public static Set<PrintWriter> clientWriters = Collections.synchronizedSet(new HashSet<>());
     protected static int clientsConnected = 0; 
     protected static int clientCounter = 0;       //Static counter för att ge varje klient unikt ID
     private Socket socket = null;
     private PrintWriter out;
-    private Set<PrintWriter> clientWriters;
     public StateHolder state;
     protected int clientID;                       //unikt ID för varje klient
     private String output;
     private Protocol protocol;
 
-    public ServerThread(Socket socket, Set<PrintWriter> clientWriters, StateHolder state) {
+    public ServerThread(Socket socket, StateHolder state) {
         this.state = state;
         this.socket = socket;
-        this.clientWriters = clientWriters;
         protocol = new Protocol(this);
 
         synchronized(ServerThread.class){
@@ -50,6 +51,7 @@ public class ServerThread extends Thread {
 
             //Klienten har tryckt ctrl-c ELLER 'q'
             synchronized (ServerThread.class) {
+                System.out.println("VI FICK ETT QUIT");
                 quit();
             }
 
@@ -77,18 +79,19 @@ public class ServerThread extends Thread {
 
     public void quitAll() {
         synchronized (ServerThread.class) {
-            //clientsConnected = 0;
+            clientsConnected = 0;
         }
         synchronized (clientWriters) {
+            
+            
             for (PrintWriter out : clientWriters) {
-                clientsConnected--;
+                System.out.println("Closing connection for ID: " + clientID);
                 out.println("CLEAR");
                 out.println("Closing connection...");
-                clientWriters.remove(out);
-            }/* 
+            }
             for (PrintWriter out : clientWriters) {
                 clientWriters.remove(out);
-            }*/
+            }
         }
     }
 

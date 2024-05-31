@@ -1,14 +1,11 @@
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Server {
     protected static StateHolder state = new StateHolder("WAITING");
     static int portNumber = 4444;
-    private static Set<PrintWriter> clientWriters = Collections.synchronizedSet(new HashSet<>());
     //anv Set för att flera trådar samtidigt ska kunna manipulera datan
     
     public static void main(String[] args) {
@@ -21,7 +18,7 @@ public class Server {
                     if(state.getState().equals("WAITING")){
                         System.out.println("\n\n");
                         System.out.println("Server.java state: " + state.getState());
-                        new ServerThread(clientSocket, clientWriters, state).start();
+                        new ServerThread(clientSocket, state).start();
                     } else {
                         reject(clientSocket);
                     }
