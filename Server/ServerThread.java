@@ -40,7 +40,7 @@ public class ServerThread extends Thread {
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                if (inputLine.equals("q")) {
+                if (inputLine.equals("QUIT")) {
                     break;
                 } else {
                     send2all(inputLine);
@@ -70,8 +70,19 @@ public class ServerThread extends Thread {
 
         
         //Hämta meddelande att skicka till alla (kommer vara 1 klient)
-        send2all("q");
+        send2all("QUIT");
         System.out.println("PLACE E / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
+    }
+
+    public void quitAll() {
+        for (PrintWriter out : clientWriters) {
+            out.println("CLEAR");
+            out.println("Closing connection...");
+        }
+        for (PrintWriter out : clientWriters) {
+            clientWriters.remove(out);
+        }
+        clientsConnected = 0;
     }
 
     public void send2all(String input) {

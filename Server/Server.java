@@ -24,7 +24,6 @@ public class Server {
                         new ServerThread(clientSocket, clientWriters, state).start();
                     } else {
                         reject(clientSocket);
-                        break;
                     }
                 } catch (Exception e) {
                     //Gick ej för klient att connecta

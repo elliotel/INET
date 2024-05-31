@@ -47,9 +47,9 @@ public class Client {
                         fromUser = "ENTER";
                         break;
                     //ESC
-                    case 27:
+                    case 'q':
                         //Quits game
-                        fromUser = "q";
+                        fromUser = "QUIT";
                         break;
                     default:
                         //

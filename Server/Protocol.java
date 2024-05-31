@@ -15,13 +15,15 @@ public class Protocol {
         System.out.println("Client " + thread.clientID + ": " + input + " STATE: " + thread.state.getState());
         switch (thread.state.getState()){
             case "WAITING":
-                if (game != null && input != "q") {
+            /*
+                if (game != null && input != "QUIT") {
                     System.out.println("ID: " + thread.clientID + " RESETTING");
                     game.resetGame();
                     game = null;
                     ServerThread.clientsConnected++;
                     System.out.println("PLACE A / ID: " + thread.clientID + " / clients connected: " + thread.clientsConnected + " / State: " + thread.state.getState());
                 }
+            */
                 if (ServerThread.clientsConnected == 1) { //Vet att den kommer vara 1 annars ska den inte funka
                     return waiting();
                 }
@@ -37,7 +39,7 @@ public class Protocol {
                         thread.state.setState("RUNNING");
                     }
                     return running(input);                              //Någon tryckte Enter
-                } else if(input != null && input.equals("q")){ 
+                } else if(input != null && input.equals("QUIT")){ 
                     synchronized (thread.state) {                       
                         thread.state.setState("WAITING");
                     }                                                   //Oavsett om man är 1 eller 2 connected
@@ -45,7 +47,7 @@ public class Protocol {
                 }
                 return ready();
             case "RUNNING":
-                    if(input != null && input.equals("q")){
+                    if(input != null && input.equals("QUIT")){
                         game.resetGame();
                         //game = null;
                         synchronized (thread.state) {                   
@@ -64,17 +66,16 @@ public class Protocol {
                         return victory();
                     }
                     else {
-                        thread.state.setState("WAITING");
-                        return waiting();
+                        thread.state.setState("WAITING");  
+                        thread.quitAll();    
                     }
             case "RESTART":
-            /* 
-            if (game != null && input != "q") {
+            if (game != null) {
                 game.resetGame();
                 game = null;
-                thread.clientsConnected++;
+                //thread.clientsConnected++;
                 System.out.println("PLACE B / ID: " + thread.clientID + " / clients connected: " + thread.clientsConnected + " / State: " + thread.state.getState());
-            }*/
+            }
             if (input == null || !input.equals("ENTER")) {
                 return restart();
             }
@@ -132,7 +133,7 @@ public class Protocol {
 
     private String victory() {
         output = "The game was won! \n\n\n" 
-               + "Press [enter] to return to menu!";
+               + "Press [enter] to close game!";
         return output;
 
     }

@@ -59,7 +59,8 @@ public class Game {
         board[6][6] = 'ã';
         board[6][board[0].length - 7] = 'õ';
         for (int col = 15; col <= board[0].length - 16; col++) {
-            board[6][col] = '*';
+            //board[6][col] = '*';
+            board[6][col] = ' ';
         }
     }
 
@@ -104,6 +105,7 @@ public class Game {
     }
 
     public Boolean movePlayer(String Direction) {
+        System.out.println("ESCAPED: " + escapedPlayers);
         if (escaped) return false;
         int nextX = player.getX();
         int nextY = player.getY();
