@@ -34,6 +34,7 @@ public class ServerThread extends Thread {
             synchronized (ServerThread.class) {
                 clientWriters.add(out);
                 clientsConnected++;
+                System.out.println("Increasing clients to " + clientsConnected);
                 System.out.println("PLACE C / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
                 send2all(null);
             }
@@ -75,6 +76,9 @@ public class ServerThread extends Thread {
     }
 
     public void quitAll() {
+        synchronized (ServerThread.class) {
+            clientsConnected = 0;
+        }
         for (PrintWriter out : clientWriters) {
             out.println("CLEAR");
             out.println("Closing connection...");
@@ -82,7 +86,6 @@ public class ServerThread extends Thread {
         for (PrintWriter out : clientWriters) {
             clientWriters.remove(out);
         }
-        clientsConnected = 0;
     }
 
     public void send2all(String input) {
