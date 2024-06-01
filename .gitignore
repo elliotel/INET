@@ -1,3 +1,4 @@
 
-/Client/target
 *.class
+.DS_Store
+/Client/target
