@@ -12,7 +12,6 @@ public class Protocol {
     
 
     public String processInput(String input){
-        System.out.println("Client " + thread.clientID + ": " + input + " STATE: " + thread.state.getState());
         switch (thread.state.getState()){
             case "WAITING":
             /*
@@ -67,7 +66,6 @@ public class Protocol {
                     }
                     else {
                         thread.state.setState("WAITING");  
-                        System.out.println("QUITALL! " + thread.clientID + ": " + input + " STATE: " + thread.state.getState());
                         //thread.quitAll();
                         return "quitall";
                     }
@@ -76,7 +74,6 @@ public class Protocol {
                 game.resetGame();
                 game = null;
                 //thread.clientsConnected++;
-                System.out.println("PLACE B / ID: " + thread.clientID + " / clients connected: " + thread.clientsConnected + " / State: " + thread.state.getState());
             }
             if (input == null || !input.equals("ENTER")) {
                 return restart();
@@ -114,7 +111,6 @@ public class Protocol {
 
     private String running(String input) {
         if (game == null) {
-            System.out.println("NULL - Launching new game for clientID: " + thread.clientID);
             game = new Game();
         }
         if (input != null && !input.equals("ENTER")) {

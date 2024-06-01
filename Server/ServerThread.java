@@ -36,7 +36,6 @@ public class ServerThread extends Thread {
                 clientWriters.add(out);
                 clientsConnected++;
                 System.out.println("Increasing clients to " + clientsConnected);
-                System.out.println("PLACE C / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
                 send2all(null);
             }
 
@@ -55,7 +54,6 @@ public class ServerThread extends Thread {
 
             //Klienten har tryckt ctrl-c ELLER 'q'
             synchronized (ServerThread.class) {
-                System.out.println("VI FICK ETT QUIT");
                 if (clientsConnected > 0){
                     quit();
                 }
@@ -81,7 +79,6 @@ public class ServerThread extends Thread {
         
         //Hämta meddelande att skicka till alla (kommer vara 1 klient)
         send2all("QUIT");
-        System.out.println("PLACE E / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
     }
 
     public void quitAll() {
@@ -103,7 +100,6 @@ public class ServerThread extends Thread {
     }
 
     public void send2all(String input) {
-        System.out.println("PLACE F / ID: " + clientID + " / clients connected: " + clientsConnected + " / State: " + state.getState());
         //Baserat på input, state, antal connected, counter, clientID
         output = protocol.processInput(input);
         if(output.equals("quitall")){

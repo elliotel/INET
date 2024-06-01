@@ -16,8 +16,7 @@ public class Server {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     if(state.getState().equals("WAITING")){
-                        System.out.println("\n\n");
-                        System.out.println("Server.java state: " + state.getState());
+                        System.out.println("\n\n\nServer.java state: " + state.getState());
                         new ServerThread(clientSocket, state).start();
                     } else {
                         reject(clientSocket);
