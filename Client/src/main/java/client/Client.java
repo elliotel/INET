@@ -12,21 +12,25 @@ public class Client {
     public static void main(String[] args) {
         String hostName = "localhost";
         int portNumber = 4444;
+        // Försök hämta socket och in/ut readers
         try (Socket socket = new Socket(hostName, portNumber);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             Terminal terminal = TerminalBuilder.terminal();
+             Terminal terminal = TerminalBuilder.terminal();    // Hämtad från jline3
              NonBlockingReader reader = terminal.reader()) 
              {
-            terminal.enterRawMode(); // Ensure terminal is in raw mode
-            terminal.writer().write("\033[?25l"); //Hides the cursor
-            //terminal.writer().write("\033[?25h"); //Shows the cursor again
-            // Start a new thread to listen for messages from the server
+            terminal.enterRawMode(); // Sätt terminal i raw mode för att kunna läsa knapp-tryck
+            terminal.writer().write("\033[?25l"); // Göm cursor
+            //terminal.writer().write("\033[?25h"); // Visa cursor
+
+            // Starta ny tråd och lyssna efter meddelanden från servern
             new Thread(new ServerListener(in, terminal)).start();
             String fromUser = "";
             int c = ' ';
+
+            // Lyssna på användaren och skicka till server
             while (true) {
-                c = reader.read(); // Read non-blocking key press
+                c = reader.read(); // Läs "non-blocking key press"
                 switch (c) {
                     case 'w':
                         fromUser = "UP";

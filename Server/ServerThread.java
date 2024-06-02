@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 
 public class ServerThread extends Thread {
-    public static Set<PrintWriter> clientWriters = Collections.synchronizedSet(new HashSet<>());
-    protected static int clientsConnected = 0; 
-    protected static int clientCounter = 0;       //Static counter för att ge varje klient unikt ID
+    public static Set<PrintWriter> clientWriters = Collections.synchronizedSet(new HashSet<>()); // För att skriva till alla klienter samtidigt
+    protected static int clientsConnected = 0;    // rör sig mellan 0 och 2
+    protected static int clientCounter = 0;       //Static counter för att ge varje klient unikt ID, har ingen övre gräns
     private Socket socket = null;
     private PrintWriter out;
     public StateHolder state;
@@ -22,6 +22,7 @@ public class ServerThread extends Thread {
         this.socket = socket;
         protocol = new Protocol(this);
 
+        // Varje gång tråd startar
         synchronized(ServerThread.class){
             clientID = ++clientCounter;
         }
@@ -33,7 +34,7 @@ public class ServerThread extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             synchronized (ServerThread.class) {
-                clientWriters.add(out);
+                clientWriters.add(out);         
                 clientsConnected++;
                 System.out.println("Increasing clients to " + clientsConnected);
                 send2all(null);

@@ -61,7 +61,7 @@ public class Protocol {
                         game.resetGame();
                         game = null;
                     }
-                    if (input == null || !input.equals("ENTER")) {
+                    if (input == null || !input.equals("ENTER")) { // Tryck något utom ENTER
                         return victory();
                     }
                     else {
@@ -71,7 +71,7 @@ public class Protocol {
                     }
             case "RESTART":
             if (game != null) {
-                game.resetGame();
+                game.resetGame();   // Något skickade quit
                 game = null;
                 //thread.clientsConnected++;
             }
@@ -113,12 +113,13 @@ public class Protocol {
         if (game == null) {
             game = new Game();
         }
+        // Vi har fått någon in-game-input från klienten
         if (input != null && !input.equals("ENTER")) {
             if (input.equals("DROP")) {
                 game.dropItem();
             }
             else {
-                //Returns true if game was won
+                //Return TRUE om spelet är vunnet!
                 if (game.movePlayer(input)) {
                     thread.state.setState("VICTORY");
                     return victory();

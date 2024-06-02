@@ -1,7 +1,7 @@
 /*
  * För att kunna dela variabeln state mellan Server och instanser av ServerThread
  * så delar vi ett mutable object "StateHolder" som håller strängen state
- * (strängar är immutable)
+ * 
  */
 public class StateHolder {
     private String state;

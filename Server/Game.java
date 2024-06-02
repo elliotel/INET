@@ -150,9 +150,11 @@ public class Game {
 
         synchronized (ServerThread.class) {
             Boolean pickedUpKey = false;
-            //Sätter pickedUpKey till true om den planerade flytten skulle landa spelaren på en nyckel, och spelaren inte redan bär på en nyckel (om spelaren redan bär på en nyckel ska ingen flytt utföras, och pickedUpKey lämnas därför som false)
+            // Sätter pickedUpKey till true om den planerade flytten skulle landa spelaren på en nyckel, 
+            // och spelaren inte redan bär på en nyckel (om spelaren redan bär på en nyckel ska ingen flytt 
+            // utföras, och pickedUpKey lämnas därför som false)
             if (board[nextY][nextX] == 'ô' || board[nextY][nextX] == 'â') {
-                if (player.getKey() != NULLCHAR) return false;
+                if (player.getKey() != NULLCHAR) return false;                 // Har redan nyckel
                 else {
                     player.pickupKey(board[nextY][nextX]);
                     pickedUpKey = true;
@@ -160,8 +162,10 @@ public class Game {
             }
 
             Boolean openedDoor = false;
-            //Sätter openedDoor till true om den planerade flytten skulle landa spelaren på en dörr (de som öppnas med nycklar, inte den stora i mitten), och spelaren har matchande nyckel. Om spelaren inte har matchande nyckel lämnas den som false, se ovan.
-            if (board[nextY][nextX] == 'õ' || board[nextY][nextX] == 'ã') {
+            //Sätter openedDoor till true om den planerade flytten skulle landa spelaren på en dörr 
+            // (de som öppnas med nycklar, inte den stora i mitten), och spelaren har matchande nyckel. 
+            // Om spelaren inte har matchande nyckel lämnas den som false, se ovan.
+            if (board[nextY][nextX] == 'õ' || board[nextY][nextX] == 'ã') {             // Om vi försöker stå på dörr
                 switch (player.getKey()) {
                     case NULLCHAR:
                         //Om vi försöker gå in i en dörr vi inte har nyckeln till ska ingen rörelse ske. Samma effekt fås av bara en break, då openedDoor är false och rörelsedelen nedan däremed inte kommer exekveras
@@ -249,7 +253,7 @@ public class Game {
                 for (int col = 0; col < board[0].length; col++) {
                     sb.append(board[row][col]);
                 }
-                sb.append('\n');
+                sb.append('\n'); // för varje ny row - gör ny rad
             }
             return sb.toString();
         }
