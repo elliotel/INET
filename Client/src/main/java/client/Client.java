@@ -97,7 +97,8 @@ class ServerListener implements Runnable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Lost connection.");
+            System.exit(0);
         }
     }
 

@@ -25,12 +25,12 @@ public class Server {
                     }
                 } catch (Exception e) {
                     //Gick ej för klient att connecta
-                    e.printStackTrace();
+                    System.out.println("Connection failed.");
                 }
             }
         } catch (Exception e) {
             //Gick ej att starta server på den porten
-            e.printStackTrace();
+            System.out.println("Connection failed.");
         }
     }
 
@@ -42,7 +42,7 @@ public class Server {
             out.println("Closing connection...");
             clientSocket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Connection failed.");
         }
     }
 }
