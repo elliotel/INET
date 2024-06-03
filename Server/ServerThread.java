@@ -63,7 +63,7 @@ public class ServerThread extends Thread {
 
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("Client: " + clientID + " disconnected");
         }
     }

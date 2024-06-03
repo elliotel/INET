@@ -99,21 +99,22 @@ public class Game {
 
     //Konfigurerar själva spelaren
     private Player setupPlayer() {
-        //Sätter det tecken som spelaren ska visas som, 1 för första som connecter, 2 för nästa
+        // Sätter det tecken som spelaren ska visas som, 1 för första som connecter, 2 för nästa
         int playerID = ++playerCount;
-        //Sätter koordinaterna
+        // Sätter koordinaterna
         int y = board.length - 7;
         int x = 6;
-        //Spelare 2 börjar på annan x-koordinat än spelare 1
+        // Spelare 2 börjar på annan x-koordinat än spelare 1
         if (playerID == 2) {
             x = board[0].length - 7;
         }
         return new Player(playerID, x, y);
     }
 
-    //Droppar den nyckel spelaren håller i.
-    //Själva droppet sker först då spelaren flyttat sig ifrån den rutan den klickar drop på (nyckeln lämnas då kvar där)
-    //droppedItem används i movePlayer för att hålla koll på om något ska lämnas när en rörelse utförts
+    // Droppar den nyckel spelaren håller i.
+    // Själva droppet sker först då spelaren flyttat sig ifrån den rutan den klickar drop på 
+    // (nyckeln lämnas då kvar där) droppedItem används i movePlayer för att hålla koll på om 
+    // något ska lämnas när en rörelse utförts
     public void dropItem() {
         //Om vi redan gått ur spelplanen med denna spelare händer inget
         if (escaped) return;
@@ -121,8 +122,8 @@ public class Game {
         if (button || player.getKey() == NULLCHAR) {
             return;
         }
-        //Annars håller vi koll i den (lokalt instantierade) variabeln droppedItem vad som ska droppas nästa drag
-        //dropKey() tar även bort föremålet från spelaren
+        // Annars håller vi koll i den (lokalt instantierade) variabeln droppedItem vad som ska droppas nästa drag
+        // dropKey() tar även bort föremålet från spelaren
         droppedItem = player.dropKey();
     }
 
@@ -162,13 +163,14 @@ public class Game {
             }
 
             Boolean openedDoor = false;
-            //Sätter openedDoor till true om den planerade flytten skulle landa spelaren på en dörr 
+            // Sätter openedDoor till true om den planerade flytten skulle landa spelaren på en dörr 
             // (de som öppnas med nycklar, inte den stora i mitten), och spelaren har matchande nyckel. 
             // Om spelaren inte har matchande nyckel lämnas den som false, se ovan.
             if (board[nextY][nextX] == 'õ' || board[nextY][nextX] == 'ã') {             // Om vi försöker stå på dörr
                 switch (player.getKey()) {
                     case NULLCHAR:
-                        //Om vi försöker gå in i en dörr vi inte har nyckeln till ska ingen rörelse ske. Samma effekt fås av bara en break, då openedDoor är false och rörelsedelen nedan däremed inte kommer exekveras
+                        // Om vi försöker gå in i en dörr vi inte har nyckeln till ska ingen rörelse ske. 
+                        // Samma effekt fås av bara en break, då openedDoor är false och rörelsedelen nedan däremed inte kommer exekveras
                         return false;
                     case 'ô':
                         if (board[nextY][nextX] == 'õ') {
@@ -188,46 +190,54 @@ public class Game {
                 }
             }
 
-            //Sätter spelaren som "escaped" om den gått till kartans utgång. Detta gör att den inte kommer kunna röra sig eller droppa items mer, samt att den försvinner från kartan.
+            // Sätter spelaren som "escaped" om den gått till kartans utgång. 
+            // Detta gör att den inte kommer kunna röra sig eller droppa items mer, 
+            // samt att den försvinner från kartan.
             if (board[nextY][nextX] == '^') {
                 board[player.getY()][player.getX()] = ' ';
                 escaped = true;
                 escapedPlayers++;
-                //Om båda spelarna har gått till kartans utgång så returnerar vi true, vilket säger till Protocol att spelet har vunnits.
+                // Om båda spelarna har gått till kartans utgång så returnerar vi true, 
+                // vilket säger till Protocol att spelet har vunnits.
                 if (escapedPlayers == 2) {
                     return true;
                 }
             }
 
             Boolean nextButton = false;
-            //Om rutan som den planerade flytten landar på är en knapp, så sätts nextButton till true, för att hantera det fallet.
+            // Om rutan som den planerade flytten landar på är en knapp, så sätts nextButton till true, 
+            // för att hantera det fallet.
             if (board[nextY][nextX] == '©') {
                 nextButton = true;
             }
 
-            //Utför rörelsen om nästa ruta är en tom ruta, ALTERNATIVT om det är en nyckel vi kan plocka upp, dörr vi kan öppna, eller knapp, enligt beskrivningarna ovan.
+            // Utför rörelsen om nästa ruta är en tom ruta, ALTERNATIVT om det är en nyckel vi kan plocka upp, 
+            // dörr vi kan öppna, eller knapp, enligt beskrivningarna ovan.
             if (board[nextY][nextX] == ' ' || pickedUpKey || openedDoor || nextButton) {
                 //Sätter nya positionen till spelarens ID (1 för player 1...), "+ '0'" behövs då player.getID() returnerar en int (1 för player 1), och vi vill ha karaktären '1'.
                 //char's lagras som int-värden, och då '0' har värdet 48, och de andra siffrorna efterföljer, blir tex '2' == 2 + '0' == 2 + 48 == 50. "+ '0'" kändes mest läsbart.
                 board[nextY][nextX] = (char) (player.getID() + '0');
 
-                //Om vi redan stod på en knapp, och nu lämnar den, så minskar vi totala antalet intryckta knappar
+                // Om vi redan stod på en knapp, och nu lämnar den, så minskar vi totala antalet intryckta knappar
                 if (button) {
                     board[player.getY()][player.getX()] = '©';
                     buttonsPressed--;
                     button = false;
                 }
-                //Om vi INTE har valt att droppa ett item, (och vi inte just kom från en knapp), så lämnar vi efter oss en tom ruta
+                // Om vi INTE har valt att droppa ett item, (och vi inte just kom från en knapp), 
+                // så lämnar vi efter oss en tom ruta
                 else if (droppedItem == NULLCHAR) {
                     board[player.getY()][player.getX()] = ' ';
                 }
-                //Och annars, så betyder det att vi droppat ett item (och inte kom från en knapp), och då lämnar vi efter oss det item:et.
+                // Och annars, så betyder det att vi droppat ett item (och inte kom från en knapp), 
+                // och då lämnar vi efter oss det item:et.
                 else {
                     board[player.getY()][player.getX()] = droppedItem;
                     droppedItem = NULLCHAR;
                 }
 
-                //Om den pågående rörelsen kommer att ställa oss på en knapp (beräknat ovan), så ökar vi buttonsPressed med 1, samt sparar att spelaren står på en knapp.
+                // Om den pågående rörelsen kommer att ställa oss på en knapp (beräknat ovan), 
+                // så ökar vi buttonsPressed med 1, samt sparar att spelaren står på en knapp.
                 if (nextButton) {
                     button = true;
                     buttonsPressed++;
@@ -245,7 +255,8 @@ public class Game {
         return false;
     }
 
-    //Bygger upp en stor string av hela matrisen via en stringbuilder, för att skicka till klienten. Går igenom tecken för tecken och lägger till newlines i slutet på varje rad.
+    // Bygger upp en stor string av hela matrisen via en stringbuilder, för att skicka till klienten. 
+    // Går igenom tecken för tecken och lägger till newlines i slutet på varje rad.
     public String printBoard() {
         synchronized (ServerThread.class) {
             StringBuilder sb = new StringBuilder(board.length * board[0].length);
